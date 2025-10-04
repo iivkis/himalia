@@ -1,6 +1,6 @@
 use std::{path::Path, sync::Arc};
 
-use adapter::repository::sqlite_sqlx::user_repository_sqlite_sqlx::SqliteSqlxUserRepository;
+use adapter::repository::sqlx::sqlite::user_repository_sqlite_sqlx::SqliteSqlxUserRepository;
 use port::user::user_service_port::{UserServicePort, user_service_dto};
 use service::user::user_service::UserService;
 use sqlx::{Pool, migrate::Migrator, pool::PoolOptions};
@@ -22,14 +22,11 @@ impl GetMigrationPath for Pool<sqlx::Postgres> {
 }
 
 #[tokio::main]
-async fn main() {
-    let pool: sqlx::Pool<sqlx::Sqlite> = PoolOptions::new()
-        .connect("sqlite://db.sqlite")
-        .await
-        .unwrap();
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let pool: sqlx::Pool<sqlx::Sqlite> = PoolOptions::new().connect("sqlite://db.sqlite").await?;
 
     let migrator = Migrator::new(pool.get_migartion_path()).await.unwrap();
-    migrator.run(&pool).await.unwrap();
+    migrator.run(&pool).await?;
 
     let user_repo = SqliteSqlxUserRepository::new();
 
@@ -42,7 +39,10 @@ async fn main() {
             },
             None,
         )
-        .await;
+        .await
+        .unwrap();
 
     println!("{:?}", user);
+
+    Ok(())
 }
