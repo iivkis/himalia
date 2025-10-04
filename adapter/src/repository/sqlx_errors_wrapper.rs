@@ -5,7 +5,7 @@ pub struct SqlxErrorWrap {
 
 impl SqlxErrorWrap {
     fn new(orig: sqlx::Error, cls: SqlxErrorClass) -> Self {
-        Self { orig: orig, cls }
+        Self { orig, cls }
     }
 }
 

@@ -6,6 +6,12 @@ use crate::repository::sqlx_errors_wrapper::{SqlxErrorClass, SqlxErrorWrap};
 
 pub struct SqliteSqlxUserRepository {}
 
+impl Default for SqliteSqlxUserRepository {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SqliteSqlxUserRepository {
     pub fn new() -> Self {
         Self {}
