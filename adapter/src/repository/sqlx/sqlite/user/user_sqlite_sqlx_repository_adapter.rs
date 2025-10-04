@@ -4,22 +4,22 @@ use sqlx::Pool;
 
 use crate::repository::sqlx_errors_wrapper::{SqlxErrorClass, SqlxErrorWrap};
 
-pub struct SqliteSqlxUserRepository {}
+pub struct UserSqliteSqlxRepositoryAdapter {}
 
-impl Default for SqliteSqlxUserRepository {
+impl Default for UserSqliteSqlxRepositoryAdapter {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl SqliteSqlxUserRepository {
+impl UserSqliteSqlxRepositoryAdapter {
     pub fn new() -> Self {
         Self {}
     }
 }
 
 #[allow(unused_variables)]
-impl UserRepositoryPort for SqliteSqlxUserRepository {
+impl UserRepositoryPort for UserSqliteSqlxRepositoryAdapter {
     type Tx = Pool<sqlx::sqlite::Sqlite>;
     type Err = sqlx::Error;
 

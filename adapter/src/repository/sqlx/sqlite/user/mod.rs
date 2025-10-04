@@ -1,0 +1,1 @@
+pub mod user_sqlite_sqlx_repository_adapter;

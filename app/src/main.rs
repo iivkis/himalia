@@ -1,6 +1,6 @@
 use std::{path::Path, sync::Arc};
 
-use adapter::repository::sqlx::sqlite::user_repository_sqlite_sqlx::SqliteSqlxUserRepository;
+use adapter::repository::sqlx::UserSqliteSqlxRepositoryAdapter;
 use port::user::user_service_port::{UserServicePort, user_service_dto};
 use service::user::user_service::UserService;
 use sqlx::{Pool, migrate::Migrator, pool::PoolOptions};
@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let migrator = Migrator::new(pool.get_migartion_path()).await.unwrap();
     migrator.run(&pool).await?;
 
-    let user_repo = SqliteSqlxUserRepository::new();
+    let user_repo = UserSqliteSqlxRepositoryAdapter::new();
 
     let user_service = Arc::new(UserService::new(Arc::new(user_repo), pool));
 
