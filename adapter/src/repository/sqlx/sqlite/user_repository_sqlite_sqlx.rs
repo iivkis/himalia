@@ -2,30 +2,7 @@ use entity::user::user_entity::UserEntity;
 use port::user::user_repository_port::{UserError, UserRepositoryPort, user_repository_dto::*};
 use sqlx::Pool;
 
-enum UserErrorWrapper {
-    Err(sqlx::Error),
-}
-
-impl From<UserErrorWrapper> for UserError<sqlx::Error> {
-    fn from(value: UserErrorWrapper) -> Self {
-        match value {
-            UserErrorWrapper::Err(err) => {
-                if let sqlx::Error::Database(dberr) = &err {
-                    if dberr.is_unique_violation() {
-                        return UserError::CreateUserUniqueViolationError(err);
-                    }
-                }
-                UserError::Unknown(err)
-            }
-        }
-    }
-}
-
-impl From<sqlx::Error> for UserErrorWrapper {
-    fn from(value: sqlx::Error) -> Self {
-        UserErrorWrapper::Err(value)
-    }
-}
+use crate::repository::sqlx_errors_wrapper::{SqlxErrorClass, SqlxErrorWrap};
 
 pub struct SqliteSqlxUserRepository {}
 
@@ -56,7 +33,12 @@ impl UserRepositoryPort for SqliteSqlxUserRepository {
         .bind(cmd.name)
         .fetch_one(&tx)
         .await
-        .map_err(|err| err.into())
-        .map_err(|err: UserErrorWrapper| err.into())
+        .map_err(|e| e.into())
+        .map_err(|e: SqlxErrorWrap| match e.cls {
+            SqlxErrorClass::UniqueViolationError => {
+                UserError::CreateUserUniqueViolationError(e.orig)
+            }
+            _ => UserError::Unknown(e.orig),
+        })
     }
 }

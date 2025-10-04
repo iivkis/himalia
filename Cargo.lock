@@ -9,6 +9,7 @@ dependencies = [
  "entity",
  "port",
  "sqlx",
+ "thiserror",
 ]
 
 [[package]]
