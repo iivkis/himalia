@@ -23,26 +23,47 @@ impl GetMigrationPath for Pool<sqlx::Postgres> {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let pool: sqlx::Pool<sqlx::Sqlite> = PoolOptions::new().connect("sqlite://db.sqlite").await?;
+    let pool: sqlx::Pool<sqlx::Sqlite> = PoolOptions::new()
+        .max_connections(10)
+        .test_before_acquire(true)
+        .connect("sqlite://db.sqlite")
+        .await?;
 
     let migrator = Migrator::new(pool.get_migartion_path()).await.unwrap();
     migrator.run(&pool).await?;
 
     let user_repo = SqliteSqlxUserRepository::new();
 
-    let user_service = UserService::new(Arc::new(user_repo), pool);
+    let user_service = Arc::new(UserService::new(Arc::new(user_repo), pool));
 
-    let user = user_service
-        .create_user(
-            user_service_dto::create_user::Command {
-                name: "Alex".to_string(),
-            },
-            None,
-        )
-        .await
-        .unwrap();
+    println!("start!");
 
-    println!("{user:?}");
+    let mut tasks = vec![];
+    for _ in 0..100_000 {
+        let user_service_cloned = user_service.clone();
+
+        let task = tokio::spawn(async move {
+            let user = user_service_cloned
+                .create_user(
+                    user_service_dto::create_user::Command {
+                        name: "Alex".to_string(),
+                    },
+                    None,
+                )
+                .await
+                .map_err(|err| println!("{:?}", err));
+        });
+
+        tasks.push(task);
+    }
+
+    println!("done!");
+
+    for t in tasks {
+        t.await?;
+    }
+
+    println!("finish!");
 
     Ok(())
 }
