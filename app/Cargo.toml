@@ -1,0 +1,12 @@
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+adapter = { version = "0.1.0", path = "../adapter" }
+entity.workspace = true
+port = { version = "0.1.0", path = "../port" }
+service.workspace = true
+sqlx = { version = "0.8.6", features = ["migrate", "postgres", "runtime-tokio"] }
+tokio = { version = "1.47.1", features = ["full"] }
