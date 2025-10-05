@@ -43,7 +43,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let user_service_cloned = user_service.clone();
 
         let task = tokio::spawn(async move {
-            let user = user_service_cloned
+            let _user = user_service_cloned
                 .create_user(
                     user_service_dto::create_user::Command {
                         name: "Alex".to_string(),

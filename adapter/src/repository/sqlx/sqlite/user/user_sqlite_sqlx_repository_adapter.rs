@@ -2,7 +2,7 @@ use entity::user::user_entity::UserEntity;
 use port::user::user_repository_port::{UserError, UserRepositoryPort, user_repository_dto::*};
 use sqlx::Pool;
 
-use crate::repository::sqlx_errors_wrapper::{SqlxErrorClass, SqlxErrorWrap};
+use crate::repository::sqlx::sqlx_errors_wrapper::{SqlxErrorClass, SqlxErrorWrap};
 
 pub struct UserSqliteSqlxRepositoryAdapter {}
 
@@ -40,11 +40,11 @@ impl UserRepositoryPort for UserSqliteSqlxRepositoryAdapter {
         .fetch_one(&tx)
         .await
         .map_err(|e| e.into())
-        .map_err(|e: SqlxErrorWrap| match e.cls {
+        .map_err(|e: SqlxErrorWrap| match e.err_class {
             SqlxErrorClass::UniqueViolationError => {
-                UserError::CreateUserUniqueViolationError(e.orig)
+                UserError::CreateUserUniqueViolationError(e.orig_err)
             }
-            _ => UserError::Unknown(e.orig),
+            _ => UserError::Unknown(e.orig_err),
         })
     }
 }

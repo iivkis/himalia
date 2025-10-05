@@ -1,11 +1,14 @@
 pub struct SqlxErrorWrap {
-    pub orig: sqlx::Error,
-    pub cls: SqlxErrorClass,
+    pub err_class: SqlxErrorClass,
+    pub orig_err: sqlx::Error,
 }
 
 impl SqlxErrorWrap {
-    fn new(orig: sqlx::Error, cls: SqlxErrorClass) -> Self {
-        Self { orig, cls }
+    fn new(err_class: SqlxErrorClass, orig_err: sqlx::Error) -> Self {
+        Self {
+            err_class,
+            orig_err,
+        }
     }
 }
 
@@ -17,8 +20,8 @@ pub enum SqlxErrorClass {
 }
 
 impl From<sqlx::Error> for SqlxErrorWrap {
-    fn from(err: sqlx::Error) -> Self {
-        let cls: SqlxErrorClass = match &err {
+    fn from(orig_err: sqlx::Error) -> Self {
+        let err_class: SqlxErrorClass = match &orig_err {
             sqlx::Error::Database(dberr) => {
                 if dberr.is_unique_violation() {
                     SqlxErrorClass::UniqueViolationError
@@ -33,6 +36,6 @@ impl From<sqlx::Error> for SqlxErrorWrap {
             _ => SqlxErrorClass::Unknown,
         };
 
-        Self::new(err, cls)
+        Self::new(err_class, orig_err)
     }
 }
