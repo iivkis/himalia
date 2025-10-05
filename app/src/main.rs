@@ -26,7 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pool: sqlx::Pool<sqlx::Sqlite> = PoolOptions::new()
         .max_connections(10)
         .test_before_acquire(true)
-        .connect("sqlite://db.sqlite")
+        .connect("sqlite://data/db.sqlite")
         .await?;
 
     let migrator = Migrator::new(pool.get_migartion_path()).await.unwrap();
