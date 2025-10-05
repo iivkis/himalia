@@ -5,4 +5,4 @@ edition = "2024"
 
 [dependencies]
 entity.workspace = true
-port = { version = "0.1.0", path = "../port" }
+port.workspace = true

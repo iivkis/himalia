@@ -1,7 +1,9 @@
 [workspace]
-members = [ "adapter","app", "entity", "port", "service"]
+members = ["adapter", "app", "entity", "port", "service"]
 resolver = "3"
 
 [workspace.dependencies]
-entity = {path = "./entity"}
-service ={ path = "./service" }
+entity = { path = "./entity" }
+service = { path = "./service" }
+port = { path = "./port" }
+adapter = { path = "./adapter" }
