@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use entity::user::user_entity::UserEntity;
+use entity::prelude::UserEntity;
 use port::{
     exec::exec_port::ExecutorWrapper,
     user::user_repository_port::{UserError, UserRepositoryPort, user_repository_dto::*},

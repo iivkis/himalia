@@ -1,4 +1,4 @@
-use entity::user::user_entity::UserEntity;
+use entity::prelude::UserEntity;
 use user_service_dto::*;
 
 use crate::user::user_error_port::UserError;

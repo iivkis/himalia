@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use entity::user::user_entity::UserEntity;
+use entity::prelude::UserEntity;
 use port::{
     exec::exec_port::ExecutorWrapper,
     user::{
