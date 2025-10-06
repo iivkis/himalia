@@ -1,8 +1,8 @@
 use adapter::repository::sqlx::UserSqliteSqlxRepositoryAdapter;
 use clap::Parser;
-use port::user::{
-    user_repository_port::ExecutorWrapper,
-    user_service_port::{UserServicePort, user_service_dto},
+use port::{
+    exec::exec_port::ExecutorWrapper,
+    user::user_service_port::{UserServicePort, user_service_dto},
 };
 use service::user::user_service::UserService;
 use sqlx::{Pool, migrate::Migrator, pool::PoolOptions};

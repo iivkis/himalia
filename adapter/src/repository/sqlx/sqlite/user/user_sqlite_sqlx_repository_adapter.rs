@@ -1,6 +1,7 @@
 use entity::user::user_entity::UserEntity;
-use port::user::user_repository_port::{
-    ExecutorWrapper, UserError, UserRepositoryPort, user_repository_dto::*,
+use port::{
+    exec::exec_port::ExecutorWrapper,
+    user::user_repository_port::{UserError, UserRepositoryPort, user_repository_dto::*},
 };
 use sqlx::{Pool, Transaction};
 

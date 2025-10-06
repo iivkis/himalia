@@ -1,3 +1,4 @@
+use crate::exec::exec_port::ExecutorWrapper;
 pub use crate::user::user_error_port::UserError;
 use entity::user::user_entity::UserEntity;
 use user_repository_dto::*;
@@ -8,12 +9,6 @@ pub mod user_repository_dto {
             pub name: String,
         }
     }
-}
-
-#[derive(Clone)]
-pub enum ExecutorWrapper<EXEC, TRANC> {
-    Executor(EXEC),
-    Transaction(TRANC),
 }
 
 pub trait UserRepositoryPort: Sync + Send {
