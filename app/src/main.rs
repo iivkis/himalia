@@ -69,7 +69,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     ExecutorWrapper::Executor(pool_cloned),
                 )
                 .await
-                .map_err(|err| println!("{:?}", err));
+                .map_err(|err| println!("{err:?}"));
         });
 
         tasks.push(task);
