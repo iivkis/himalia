@@ -1,3 +1,5 @@
+use std::marker::PhantomData;
+
 use entity::user::user_entity::UserEntity;
 use port::{
     exec::exec_port::ExecutorWrapper,
@@ -7,17 +9,21 @@ use sqlx::{Pool, Transaction};
 
 use crate::repository::sqlx::sqlx_errors_wrapper::{SqlxErrorClass, SqlxErrorWrap};
 
-pub struct UserSqliteSqlxRepositoryAdapter {}
+pub struct UserSqliteSqlxRepositoryAdapter<'t> {
+    phantom: PhantomData<&'t ()>,
+}
 
-impl Default for UserSqliteSqlxRepositoryAdapter {
+impl<'t> Default for UserSqliteSqlxRepositoryAdapter<'t> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl UserSqliteSqlxRepositoryAdapter {
+impl<'t> UserSqliteSqlxRepositoryAdapter<'t> {
     pub fn new() -> Self {
-        Self {}
+        Self {
+            phantom: PhantomData,
+        }
     }
 
     async fn create_user<'ex, EX>(
@@ -47,9 +53,9 @@ impl UserSqliteSqlxRepositoryAdapter {
 }
 
 #[allow(unused_variables)]
-impl UserRepositoryPort for UserSqliteSqlxRepositoryAdapter {
+impl<'t> UserRepositoryPort for UserSqliteSqlxRepositoryAdapter<'t> {
     type Executor = Pool<sqlx::Sqlite>;
-    type Transaction = Transaction<'static, sqlx::Sqlite>;
+    type Transaction = Transaction<'t, sqlx::Sqlite>;
 
     async fn create_user(
         &self,
