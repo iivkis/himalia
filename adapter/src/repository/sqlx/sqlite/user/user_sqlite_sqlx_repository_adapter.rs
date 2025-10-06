@@ -53,9 +53,9 @@ impl UserRepositoryPort for UserSqliteSqlxRepositoryAdapter {
     async fn create_user(
         &self,
         cmd: create_user::Command,
-        tx: ExecutorWrapper<Self::Executor, Self::Transaction>,
+        exec: ExecutorWrapper<Self::Executor, Self::Transaction>,
     ) -> Result<UserEntity, UserError> {
-        match tx {
+        match exec {
             ExecutorWrapper::Executor(ex) => Self::create_user(cmd, &ex).await,
             ExecutorWrapper::Transaction(mut ex) => Self::create_user(cmd, ex.as_mut()).await,
         }
