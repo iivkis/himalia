@@ -1,4 +1,4 @@
-use adapter::repository::sqlx::UserSqliteSqlxRepositoryAdapter;
+use adapter::prelude::UserSqliteSqlxRepositoryAdapter;
 use clap::Parser;
 use port::{
     exec::exec_port::ExecutorWrapper,
