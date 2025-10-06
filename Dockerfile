@@ -36,4 +36,4 @@ COPY --from=builder /base/target/release/app ./app
 
 COPY ./migrations ./migrations
 
-CMD ["./app"]
+ENTRYPOINT [ "./app" ]

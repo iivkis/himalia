@@ -1,9 +1,11 @@
-use std::{path::Path, sync::Arc};
-
 use adapter::repository::sqlx::UserSqliteSqlxRepositoryAdapter;
+use clap::Parser;
 use port::user::user_service_port::{UserServicePort, user_service_dto};
 use service::user::user_service::UserService;
 use sqlx::{Pool, migrate::Migrator, pool::PoolOptions};
+use std::{path::Path, sync::Arc};
+
+mod cmd_flags;
 
 trait GetMigrationPath {
     fn get_migartion_path(&self) -> &'static Path;
@@ -23,14 +25,26 @@ impl GetMigrationPath for Pool<sqlx::Postgres> {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let pool: sqlx::Pool<sqlx::Sqlite> = PoolOptions::new()
+    let cmd_flags = cmd_flags::CmdFlags::parse();
+
+    let pool = PoolOptions::new()
         .max_connections(10)
         .test_before_acquire(true)
         .connect("sqlite://data/db.sqlite")
         .await?;
 
-    let migrator = Migrator::new(pool.get_migartion_path()).await.unwrap();
-    migrator.run(&pool).await?;
+    if cmd_flags.only_migration {
+        println!("run migrator..");
+        Migrator::new(pool.get_migartion_path())
+            .await
+            .unwrap()
+            .run(&pool)
+            .await?;
+        println!("migration success!");
+        return Ok(());
+    } else {
+        println!("run without migration");
+    }
 
     let user_repo = UserSqliteSqlxRepositoryAdapter::new();
 

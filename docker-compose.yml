@@ -3,3 +3,12 @@ services:
     build: .
     volumes:
       - ./data:/runtime/data
+    depends_on:
+      migration:
+              condition: service_completed_successfully
+
+  migration:
+    build: .
+    command: --only-migration
+    volumes:
+      - ./data:/runtime/data
