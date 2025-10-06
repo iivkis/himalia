@@ -1,14 +1,10 @@
 pub struct SqlxErrorWrap {
     pub err_class: SqlxErrorClass,
-    pub orig_err: sqlx::Error,
 }
 
 impl SqlxErrorWrap {
-    fn new(err_class: SqlxErrorClass, orig_err: sqlx::Error) -> Self {
-        Self {
-            err_class,
-            orig_err,
-        }
+    fn new(err_class: SqlxErrorClass) -> Self {
+        Self { err_class }
     }
 }
 
@@ -36,6 +32,6 @@ impl From<sqlx::Error> for SqlxErrorWrap {
             _ => SqlxErrorClass::Unknown,
         };
 
-        Self::new(err_class, orig_err)
+        Self::new(err_class)
     }
 }

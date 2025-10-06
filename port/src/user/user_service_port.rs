@@ -11,10 +11,12 @@ pub mod user_service_dto {
     }
 }
 
-pub trait UserServicePort<T, E> {
+pub trait UserServicePort<EXEC, TRANC>: Send + Sync {
+    type Exec: Send + Sync;
+
     fn create_user(
         &self,
         cmd: create_user::Command,
-        tx: Option<T>,
-    ) -> impl Future<Output = Result<UserEntity, UserError<E>>> + Send;
+        exec: Self::Exec,
+    ) -> impl Future<Output = Result<UserEntity, UserError>> + Send;
 }

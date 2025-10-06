@@ -1,6 +1,9 @@
 use adapter::repository::sqlx::UserSqliteSqlxRepositoryAdapter;
 use clap::Parser;
-use port::user::user_service_port::{UserServicePort, user_service_dto};
+use port::user::{
+    user_repository_port::ExecutorWrapper,
+    user_service_port::{UserServicePort, user_service_dto},
+};
 use service::user::user_service::UserService;
 use sqlx::{Pool, migrate::Migrator, pool::PoolOptions};
 use std::{path::Path, sync::Arc};
@@ -48,13 +51,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let user_repo = UserSqliteSqlxRepositoryAdapter::new();
 
-    let user_service = Arc::new(UserService::new(Arc::new(user_repo), pool));
+    let user_service = Arc::new(UserService::new(Arc::new(user_repo)));
 
     println!("start!");
 
     let mut tasks = vec![];
     for _ in 0..100_000 {
         let user_service_cloned = user_service.clone();
+        let pool_cloned = pool.clone();
 
         let task = tokio::spawn(async move {
             let _user = user_service_cloned
@@ -62,7 +66,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     user_service_dto::create_user::Command {
                         name: "Alex".to_string(),
                     },
-                    None,
+                    ExecutorWrapper::Executor(pool_cloned),
                 )
                 .await
                 .map_err(|err| println!("{:?}", err));

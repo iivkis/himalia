@@ -10,13 +10,19 @@ pub mod user_repository_dto {
     }
 }
 
+#[derive(Clone)]
+pub enum ExecutorWrapper<EXEC, TRANC> {
+    Executor(EXEC),
+    Transaction(TRANC),
+}
+
 pub trait UserRepositoryPort: Sync + Send {
-    type Tx;
-    type Err;
+    type Executor: Send + Sync;
+    type Transaction: Send + Sync;
 
     fn create_user(
         &self,
         cmd: create_user::Command,
-        tx: Self::Tx,
-    ) -> impl Future<Output = Result<UserEntity, UserError<Self::Err>>> + Send;
+        exec: ExecutorWrapper<Self::Executor, Self::Transaction>,
+    ) -> impl Future<Output = Result<UserEntity, UserError>> + Send;
 }
