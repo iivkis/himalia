@@ -1,12 +1,11 @@
+mod cmd_flags;
+
 use adapter::prelude::UserSqliteSqlxRepositoryAdapter;
 use clap::Parser;
+use port::prelude::{ExecWrap, UserServicePort, user_service_dto};
 use service::prelude::UserService;
 use sqlx::{Pool, migrate::Migrator, pool::PoolOptions};
 use std::{path::Path, sync::Arc};
-
-use port::prelude::{ExecWrap, UserServicePort, user_service_dto};
-
-mod cmd_flags;
 
 trait GetMigrationPath {
     fn get_migartion_path(&self) -> &'static Path;
