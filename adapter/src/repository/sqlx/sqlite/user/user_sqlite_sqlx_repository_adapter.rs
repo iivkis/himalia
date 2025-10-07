@@ -4,7 +4,10 @@ use entity::prelude::UserEntity;
 use port::prelude::{ExecWrap, UserError, UserRepositoryPort, user_repository_dto::create_user};
 use sqlx::{Pool, Transaction};
 
-use crate::repository::sqlx::sqlx_errors_wrapper::{SqlxErrorClass, SqlxErrorWrap};
+use crate::repository::sqlx::{
+    model::user_model::UserModel,
+    sqlx_errors_wrapper::{SqlxErrorClass, SqlxErrorWrap},
+};
 
 pub struct UserSqliteSqlxRepositoryAdapter<'t> {
     phantom: PhantomData<&'t ()>,
@@ -30,7 +33,7 @@ impl<'t> UserSqliteSqlxRepositoryAdapter<'t> {
     where
         EX: sqlx::Executor<'ex, Database = sqlx::Sqlite>,
     {
-        sqlx::query_as::<_, UserEntity>(
+        sqlx::query_as::<_, UserModel>(
             "
             INSERT INTO users (
                 name
@@ -41,6 +44,7 @@ impl<'t> UserSqliteSqlxRepositoryAdapter<'t> {
         .bind(cmd.name)
         .fetch_one(exec)
         .await
+        .map(|k| k.into())
         .map_err(|e| e.into())
         .map_err(|e: SqlxErrorWrap| match e.err_class {
             SqlxErrorClass::UniqueViolationError => UserError::CreateUserUniqueViolationError(),
