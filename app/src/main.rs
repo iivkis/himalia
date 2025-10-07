@@ -1,12 +1,10 @@
 use adapter::prelude::UserSqliteSqlxRepositoryAdapter;
 use clap::Parser;
-use port::{
-    exec::exec_port::ExecutorWrapper,
-    user::user_service_port::{UserServicePort, user_service_dto},
-};
-use service::user::user_service::UserService;
+use service::prelude::UserService;
 use sqlx::{Pool, migrate::Migrator, pool::PoolOptions};
 use std::{path::Path, sync::Arc};
+
+use port::prelude::{ExecWrap, UserServicePort, user_service_dto};
 
 mod cmd_flags;
 
@@ -66,7 +64,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     user_service_dto::create_user::Command {
                         name: "Alex".to_string(),
                     },
-                    ExecutorWrapper::Executor(pool_cloned),
+                    ExecWrap::Executor(pool_cloned),
                 )
                 .await
                 .map_err(|err| println!("{err:?}"));

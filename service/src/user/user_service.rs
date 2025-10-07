@@ -1,13 +1,8 @@
 use std::sync::Arc;
 
 use entity::prelude::UserEntity;
-use port::{
-    exec::exec_port::ExecutorWrapper,
-    user::{
-        user_error_port::UserError,
-        user_repository_port::{UserRepositoryPort, user_repository_dto},
-        user_service_port::{UserServicePort, user_service_dto},
-    },
+use port::prelude::{
+    ExecWrap, UserError, UserRepositoryPort, UserServicePort, user_repository_dto, user_service_dto,
 };
 
 pub struct UserService<R>
@@ -30,7 +25,7 @@ impl<R> UserServicePort<R::Executor, R::Transaction> for UserService<R>
 where
     R: UserRepositoryPort + Sync + Send,
 {
-    type Exec = ExecutorWrapper<R::Executor, R::Transaction>;
+    type Exec = ExecWrap<R::Executor, R::Transaction>;
 
     async fn create_user(
         &self,

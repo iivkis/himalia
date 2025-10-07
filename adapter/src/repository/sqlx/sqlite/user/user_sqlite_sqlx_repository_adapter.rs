@@ -1,10 +1,7 @@
 use std::marker::PhantomData;
 
 use entity::prelude::UserEntity;
-use port::{
-    exec::exec_port::ExecutorWrapper,
-    user::user_repository_port::{UserError, UserRepositoryPort, user_repository_dto::*},
-};
+use port::prelude::{ExecWrap, UserError, UserRepositoryPort, user_repository_dto::create_user};
 use sqlx::{Pool, Transaction};
 
 use crate::repository::sqlx::sqlx_errors_wrapper::{SqlxErrorClass, SqlxErrorWrap};
@@ -60,11 +57,11 @@ impl<'t> UserRepositoryPort for UserSqliteSqlxRepositoryAdapter<'t> {
     async fn create_user(
         &self,
         cmd: create_user::Command,
-        exec: ExecutorWrapper<Self::Executor, Self::Transaction>,
+        exec: ExecWrap<Self::Executor, Self::Transaction>,
     ) -> Result<UserEntity, UserError> {
         match exec {
-            ExecutorWrapper::Executor(ex) => Self::create_user(cmd, &ex).await,
-            ExecutorWrapper::Transaction(mut ex) => Self::create_user(cmd, ex.as_mut()).await,
+            ExecWrap::Executor(ex) => Self::create_user(cmd, &ex).await,
+            ExecWrap::Transaction(mut ex) => Self::create_user(cmd, ex.as_mut()).await,
         }
     }
 }

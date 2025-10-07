@@ -1,5 +1,5 @@
 #[derive(Clone)]
-pub enum ExecutorWrapper<EXEC, TRANC> {
+pub enum ExecWrap<EXEC, TRANC> {
     Executor(EXEC),
     Transaction(TRANC),
 }
